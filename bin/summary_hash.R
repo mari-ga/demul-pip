@@ -20,6 +20,7 @@ demuxem_summary <- function(demuxem_res) {
     obs_res_dir <- list.files(x, pattern = "_obs.csv", full.names = TRUE)[1]
     obs_res <- fread(obs_res_dir, header = TRUE)
     colnames(obs_res)[1] <- "Barcode"
+    obs_res[obs_res$demux_type == "unknown",]$assignment <- "negative"
     demuxem_assign <- obs_res[, c("Barcode", "assignment")]
     colnames(demuxem_assign)[2] <- basename(x)
     demuxem_assign
@@ -36,7 +37,8 @@ demuxem_summary <- function(demuxem_res) {
     demuxem_classi
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
   classi$Barcode <- paste0(classi$Barcode, '-1')
-  write.csv(classi, "demuxem_classification.csv", row.names=FALSE)
+  classi[classi == "unknown"] <- "negative"
+  write.csv(classi, "demuxem_classification.csv", row.names=FALSE, quote=FALSE)
   
   params <- lapply(demuxem_res, function(x){
     params_dir <- list.files(x, pattern = "params.csv", full.names = TRUE)[1]
@@ -44,7 +46,7 @@ demuxem_summary <- function(demuxem_res) {
     colnames(params_res)[2] <- basename(x)
     params_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Argument"), .)
-  write.csv(params, "demuxem_params.csv", row.names=FALSE)
+  write.csv(params, "demuxem_params.csv", row.names=FALSE, quote=FALSE)
   
 }
 
@@ -56,7 +58,9 @@ hashsolo_summary <- function(hashsolo_res){
     colnames(hashsolo_assign) <- c("Barcode", basename(x))
     hashsolo_assign
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-  write.csv(assign, "hashsolo_assignment.csv", row.names=FALSE)
+  assign[assign == "Doublet"] <- "doublet"
+  assign[assign == "Negative"] <- "negative"
+  write.csv(assign, "hashsolo_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- lapply(hashsolo_res, function(x){
     obs_res_dir <- list.files(x, pattern = "_res.csv", full.names = TRUE)[1]
@@ -68,7 +72,7 @@ hashsolo_summary <- function(hashsolo_res){
     colnames(hashsolo_classi) <- c("Barcode", basename(x))
     hashsolo_classi
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-  write.csv(classi, "hashsolo_classification.csv", row.names=FALSE)
+  write.csv(classi, "hashsolo_classification.csv", row.names=FALSE, quote=FALSE)
   
   params <- lapply(hashsolo_res, function(x){
     params_dir <- list.files(x, pattern = "params.csv", full.names = TRUE)[1]
@@ -76,7 +80,7 @@ hashsolo_summary <- function(hashsolo_res){
     colnames(params_res)[2] <- basename(x)
     params_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Argument"), .)
-  write.csv(params, "hashsolo_params.csv", row.names=FALSE)
+  write.csv(params, "hashsolo_params.csv", row.names=FALSE, quote=FALSE)
 }
 
 hasheddrops_summary <- function(hasheddrops_res){
@@ -89,7 +93,7 @@ hasheddrops_summary <- function(hasheddrops_res){
     colnames(hasheddrops_classi) <- c("Barcode", basename(x))
     hasheddrops_classi
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-  write.csv(classi, "hasheddrops_classification.csv", row.names=FALSE)
+  write.csv(classi, "hasheddrops_classification.csv", row.names=FALSE, quote=FALSE)
   
   params <- lapply(hasheddrops_res, function(x){
     params_dir <- list.files(x, pattern = "params.csv", full.names = TRUE)[1]
@@ -98,7 +102,7 @@ hasheddrops_summary <- function(hasheddrops_res){
     colnames(params_res)[2] <- basename(x)
     params_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Argument"), .)
-  write.csv(params, "hasheddrops_params.csv", row.names=FALSE)
+  write.csv(params, "hasheddrops_params.csv", row.names=FALSE, quote=FALSE)
 }
 
 multiseq_summary <- function(multiseq_res){
@@ -108,15 +112,15 @@ multiseq_summary <- function(multiseq_res){
     colnames(multiseq_assign) = c("Barcode", basename(x))
     multiseq_assign
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-  write.csv(assign, "multiseq_assignment.csv", row.names=FALSE)
+  assign[assign == "Doublet"] <- "doublet"
+  assign[assign == "Negative"] <- "negative"
+  write.csv(assign, "multiseq_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- assign[,-1]
-  classi[classi != "Doublet" & classi != "Negative"] <- "singlet"
-  classi[classi == "Doublet"] <- "doublet"
-  classi[classi == "Negative"] <- "negative"
+  classi[classi != "doublet" & classi != "negative"] <- "singlet"
   classi$Barcode <- assign$Barcode
   classi <- classi %>% select(order(colnames(classi)))
-  write.csv(classi, "multiseq_classification.csv", row.names=FALSE)
+  write.csv(classi, "multiseq_classification.csv", row.names=FALSE, quote=FALSE)
   
   params <- lapply(multiseq_res, function(x){
     params_dir <- list.files(x, pattern = "params.csv", full.names = TRUE)[1]
@@ -125,7 +129,7 @@ multiseq_summary <- function(multiseq_res){
     colnames(params_res)[2] <- basename(x)
     params_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Argument"), .)
-  write.csv(params, "multiseq_params.csv", row.names=FALSE)
+  write.csv(params, "multiseq_params.csv", row.names=FALSE, quote=FALSE)
 }
 
 htodemux_summary <- function(htodemux_res){
@@ -135,7 +139,9 @@ htodemux_summary <- function(htodemux_res){
     colnames(htodemux_assign) = c("Barcode", basename(x))
     htodemux_assign
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-  write.csv(assign, "htodemux_assignment.csv", row.names=FALSE)
+  assign[assign == "Doublet"] <- "doublet"
+  assign[assign == "Negative"] <- "negative"
+  write.csv(assign, "htodemux_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- lapply(htodemux_res, function(x){
     obs_res_dir <- list.files(x, pattern = "_classification_htodemux.csv", full.names = TRUE)[1]
@@ -151,7 +157,7 @@ htodemux_summary <- function(htodemux_res){
   classi[classi == "Negative"] <- "negative"
   classi$Barcode <- classi_barcode
   classi <- classi %>% select(order(colnames(classi)))
-  write.csv(classi, "htodemux_classification.csv", row.names=FALSE)
+  write.csv(classi, "htodemux_classification.csv", row.names=FALSE, quote=FALSE)
   
   params <- lapply(htodemux_res, function(x){
     params_dir <- list.files(x, pattern = "params.csv", full.names = TRUE)[1]
@@ -160,7 +166,7 @@ htodemux_summary <- function(htodemux_res){
     colnames(params_res)[2] <- basename(x)
     params_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Argument"), .)
-  write.csv(params, "htodemux_params.csv", row.names=FALSE)
+  write.csv(params, "htodemux_params.csv", row.names=FALSE, quote=FALSE)
 }
 
 solo_summary <- function(solo_res){
@@ -171,7 +177,7 @@ solo_summary <- function(solo_res){
     solo_classi$Barcode <- gsub("-0", "", solo_classi$Barcode)
     solo_classi
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-  write.csv(classi, "solo_classification.csv", row.names=FALSE)
+  write.csv(classi, "solo_classification.csv", row.names=FALSE, quote=FALSE)
   
   params <- lapply(solo_res, function(x){
     params_dir <- list.files(x, pattern = "params.csv", full.names = TRUE)[1]
@@ -179,7 +185,7 @@ solo_summary <- function(solo_res){
     colnames(params_res)[2] <- basename(x)
     params_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Argument"), .)
-  write.csv(params, "solo_params.csv", row.names=FALSE)
+  write.csv(params, "solo_params.csv", row.names=FALSE, quote=FALSE)
 }
 
 
@@ -233,78 +239,14 @@ classification_all <- lapply(classification, function(x){
   classi
 }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
 
-classification_all$count_dou <- apply(classification_all[,-1], 1, function(x) sum(x == 'doublet', na.rm=TRUE))
-classification_all$count_neg <- apply(classification_all[,-1], 1, function(x) sum(x == 'negative', na.rm=TRUE))
+write.csv(classification_all, "hash_classification_all.csv", row.names=FALSE, quote=FALSE)
+#classification_all$count_dou <- apply(classification_all[,-1], 1, function(x) sum(x == 'doublet', na.rm=TRUE))
+#classification_all$count_neg <- apply(classification_all[,-1], 1, function(x) sum(x == 'negative', na.rm=TRUE))
 classification_all$count_sin <- apply(classification_all[,-1], 1, function(x) sum(x == 'singlet', na.rm=TRUE))
-write.csv(classification_all, "hash_classification_all.csv", row.names=FALSE)
+
 
 # if(args$select != 0 ){
 write.table(classification_all[classification_all$count_sin<=args$select,]$Barcode, file='selected_barcodes.tsv', quote=FALSE, sep='\t', col.names = FALSE, row.names = FALSE)
 # }else{
     # write.table(classification_all[,1], file='selected_barcodes.tsv', quote=FALSE, sep='\t', col.names = FALSE, row.names = FALSE)
 # }
-
-
-
-
-
-
-# demuxem_res <- str_split("../hash_out/demuxem/demuxem_1;../hash_out/demuxem/demuxem_2", pattern=';')[[1]]
-# demuxem_summary(demuxem_res)
-# hashsolo_res <- str_split("../hash_out/hashsolo/hashsolo_1;../hash_out/hashsolo/hashsolo_2", pattern=';')[[1]]
-# hashsolo_summary(hashsolo_res)
-# hasheddrops_res <- str_split("../hash_out/hashedDrops/hashedDrops_1;../hash_out/hashedDrops/hashedDrops_2", pattern=';')[[1]]
-# hasheddrops_summary(hasheddrops_res)
-# multiseq_res <- str_split("../hash_out/multiseq/multiseq_1;../hash_out/multiseq/multiseq_2", pattern=';')[[1]]
-# multiseq_summary(multiseq_res)
-# htodemux_res <- str_split("../hash_out/htodemux/htodemux_1;../hash_out/htodemux/htodemux_2", pattern=';')[[1]]
-# htodemux_summary(htodemux_res)
-
-# solo <- fread("~/Desktop/hash_out/solo/solo_predict.csv", header = TRUE)
-# colnames(solo) <- c("Barcode", "Classification")
-# solo$Barcode <- gsub("*-0","",solo$Barcode)
-# 
-# htodemul_assign = fread("../hash_out/htodemux/htodemux_out/htodemux_assignment_htodemux.csv", header = TRUE) 
-# colnames(htodemul_assign) = c("Barcode","Assignment")
-# htodemul_assign
-# 
-# htodemul_classi = fread("../hash_out/htodemux/htodemux_out/htodemux_classification_htodemux.csv", header = TRUE)  
-# colnames(htodemul_classi) = c("Barcode", "Classification")
-# htodemul_classi
-# 
-# multiseq_assign = fread("../hash_out/multiseq/multiseq_out/multiseq.csv", header = TRUE)  
-# colnames(multiseq_assign) = c("Barcode","Assignment")
-# multiseq_assign
-# 
-# hasheddrops_res = fread("../hash_out/hashedDrops/hashedDrops_out/hashedDrops.csv", header = TRUE)  
-# hasheddrops_res$Classification = ifelse(hasheddrops_res$Confident, "Singlet", ifelse(hasheddrops_res$Doublet, "Doublet", "Negative"))
-# colnames(hasheddrops_res)[1] = 'Barcode'
-# hasheddrops_classi = hasheddrops_res[,c('Barcode', 'Classification')]
-# hasheddrops_classi
-# 
-# demuxem_res = fread("../hash_out/demuxem/demuxem_out/demuxem_res_obs.csv", header = TRUE)  
-# colnames(demuxem_res)[1] = "Barcode"
-# demuxem_assign <- demuxem_res[, c("Barcode", "assignment")]
-# demuxem_assign
-# demuxem_classi <- demuxem_res[, c("Barcode", "demux_type")]
-# colnames(demuxem_classi)[2] = "Classification"
-# demuxem_classi
-# 
-# hash_solo <- fread("~/Desktop/hash_out/hashsolo/hashsolo_out/hashsolo.csv")
-# hash_solo <- hash_solo[, c("V1", "most_likely_hypothesis", "Classification")]
-# colnames(hash_solo) <- c("Barcode", "Classification", "Assignment")
-# hash_solo$Classification[hash_solo$Classification == 0]  <- "negative"
-# hash_solo$Classification[hash_solo$Classification == 1]  <- "singlet"
-# hash_solo$Classification[hash_solo$Classification == 2]  <- "doublet"
-# hash_solo_assign <- hash_solo[, -c("Classification")]
-# hash_solo_classi <- hash_solo[, -c("Assignment")]
-# table(hash_solo$Assignment)
-
-# a="/Users/xichenwu/hash_demulti的副本/work/da/cf51271552727c547df0897b702418/multiseq_1;"
-# a = substring(a,1, nchar(a)-1)
-# multiseq_res <- str_split(a, pattern=';')[[1]]
-# multiseq_summary(multiseq_res)
-
-#a = "/Users/xichenwu/hash_demulti/hash_out/solo/solo_1"
-#solo_res <- str_split(a, pattern=';')[[1]]
-#solo_summary(solo_res)

@@ -71,7 +71,7 @@ workflow filter_variant{
     main:
         bcftools(vcf, concat, filter)
     emit:
-        bcftools.out.collect()
+        bcftools.out
 }
   
 workflow{

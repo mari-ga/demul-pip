@@ -14,6 +14,15 @@ include { demultiplex_scSplit } from './gene_demulti/scsplit'
 include { demultiplex_souporcell } from './gene_demulti/souporcell'
 include { demultiplex_vireo } from './gene_demulti/vireo'
 
+def split_input(input){
+    if (input =~ /;/ ){
+        Channel.from(input).map{ return it.tokenize(';')}.flatten()
+    }
+    else{
+        Channel.from(input)
+    }
+}
+
 process summary{
     publishDir "$params.outdir/$params.mode/gene_demulti", mode: 'copy'
     input:
@@ -130,7 +139,7 @@ workflow gene_demultiplexing {
                 if (params.scSplit_variant == 'freebayes' | params.scSplit_variant == 'Both'){
                     freebayes_region = Channel.from(1..22, "X","Y").flatten()
                     if (params.region != "False"){
-                        freebayes_region = Channel.value(params.region)
+                        freebayes_region = split_input(params.region)
                     }
                     if(params.scSplit_preprocess != 'False'){
                         variant_freebayes(qc_bam, qc_bam_bai, freebayes_region)
@@ -158,7 +167,7 @@ workflow gene_demultiplexing {
             if (params.scSplit_variant == "freebayes" | params.scSplit_variant == 'Both'){
                 freebayes_region = Channel.from(1..22, "X","Y","MT").flatten()
                 if (params.region != "False"){
-                    freebayes_region = Channel.value(params.region)
+                    freebayes_region = split_input(params.region)
                 }
                 if(params.scSplit_preprocess != 'False'){
                     variant_freebayes(qc_bam, qc_bam_bai, freebayes_region)
@@ -213,7 +222,7 @@ workflow gene_demultiplexing {
         bam = params.scSplit_preprocess == 'True'? qc_bam: (params.scSplit_preprocess == 'False'? input_bam : qc_bam.mix(input_bam))
         bai = params.scSplit_preprocess == 'True'? qc_bam_bai: (params.scSplit_preprocess == 'False'? input_bai : qc_bam_bai.mix(input_bai))
         vcf = params.scSplit_variant == 'False'? Channel.fromPath(params.vcf_mixed): \
-            (params.scSplit_variant == 'freebayes'? freebayes_vcf: \
+            (params.scSplit_variant == 'freebayes'? filter_variant.out.map{ return it + "/filtered_sorted_total_chroms.vcf"} : \
             (params.scSplit_variant == 'cellSNP'? variant_cellSNP.out.map{ return it + "/*/cellSNP.cells.vcf"} : \
             (params.scSplit_variant == 'Both'? variant_cellSNP.out.map{ return it + "/*/cellSNP.cells.vcf"}.mix(freebayes_vcf) : \
             (params.scSplit_variant == 'noCellSNP'? freebayes_vcf.mix(Channel.fromPath(params.vcf_mixed)) : \

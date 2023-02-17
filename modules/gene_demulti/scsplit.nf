@@ -1,6 +1,8 @@
 #!/usr/bin/env nextflow
 '''
 scSplit_loc = Channel.fromPath(params.scSplit_loc)
+def vcf_known_data_name = vcf_known != 'False' ? file(vcf_known).baseName : 'known_variants_not_given'
+
 '''
 
 nextflow.enable.dsl=2
@@ -31,13 +33,11 @@ process scSplit{
         path "scsplit_${task.index}"
    
     script:
-
-        def vcf_name = vcf.baseName
-        def bam_name = bam.baseName
+        
         def common_data = com != 'False' ? "--com $com" : ''
-        def common_data_name = com != 'False' ? file(com).baseName : 'common_variants_not_given'
+        def common_data_name = com != 'False' ? com : 'common_variants_not_given'
         def vcf_known_data = vcf_known != 'False' ? "--vcf ${vcf_known}" : ''
-        def vcf_known_data_name = vcf_known != 'False' ? file(vcf_known).baseName : 'known_variants_not_given'
+        def vcf_known_data_name = vcf_known != 'False' ? vcf_known : 'known_variants_not_given'
         def sub_yesno = num == 0 ? "$sub": 'no_sub'
         
         def vcf_data = "-v $vcf"
@@ -54,7 +54,7 @@ process scSplit{
         mkdir scsplit_${task.index}
         mkdir $out
         touch scsplit_${task.index}/params.csv
-        echo -e "Argument,Value \n vcf,${vcf_name} \n bam,${bam_name} \n barcode,$barcode \n common_data, ${common_data_name} \n num, ${num} \n sub, ${sub_yesno} \n ems, ${ems} \n dbl, ${dbl} \n vcf_known_data, ${vcf_known_data_name}" >> scsplit_${task.index}/params.csv
+        echo -e "Argument,Value \n vcf,$vcf \n bam,$bam \n barcode,$barcode \n common_data, ${common_data_name} \n num, ${num} \n sub, ${sub_yesno} \n ems, ${ems} \n dbl, ${dbl} \n vcf_known_data, ${vcf_known_data_name}" >> scsplit_${task.index}/params.csv
         
         python $scsplit_loc/scSplit count ${vcf_data} ${bam_data} ${barcode_data} ${common_data} -r $ref -a $alt --out $out
         python $scsplit_loc/scSplit run -r $out/$ref -a $out/$alt ${num_data} ${sub_data} ${ems_data} ${dbl_data} ${vcf_known_data} --out $out

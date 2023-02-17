@@ -72,21 +72,21 @@ demuxlet_summary <- function(demuxlet_res) {
     colnames(demuxlet_assign)[2] <- basename(x)
     demuxlet_assign
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-  write.csv(assign, "demuxlet_assignment.csv", row.names=FALSE)
+  write.csv(assign, "demuxlet_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- assign[,-1]
   classi[classi != "AMB" & classi != "DBL"] <- "SNG"
   classi$Barcode <- assign$Barcode
   classi <- classi %>% select(order(colnames(classi)))
   
-  write.csv(classi, "demuxlet_classification.csv", row.names=FALSE)
+  write.csv(classi, "demuxlet_classification.csv", row.names=FALSE, quote=FALSE)
   
   classi_sum <- data.frame(table(t(classi[,-1])))
   colnames(classi_sum) <- c("Classification", "Frequency")
-  write.csv(classi_sum, "demuxlet_classification_summary.csv", row.names=FALSE)
+  write.csv(classi_sum, "demuxlet_classification_summary.csv", row.names=FALSE, quote=FALSE)
   assign_sum <- data.frame(table(t(assign[,-1])))
   colnames(assign_sum) <- c("Assignment", "Frequency")
-  write.csv(assign_sum, "demuxlet_assignment_summary.csv", row.names=FALSE)
+  write.csv(assign_sum, "demuxlet_assignment_summary.csv", row.names=FALSE, quote=FALSE)
   
   params <- lapply(demuxlet_res, function(x){
     params_dir <- list.files(x, pattern = "params.csv", full.names = TRUE)[1]
@@ -94,7 +94,7 @@ demuxlet_summary <- function(demuxlet_res) {
     colnames(params_res)[2] <- basename(x)
     params_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Argument"), .)
-  write.csv(params, "demuxlet_params.csv", row.names=FALSE)
+  write.csv(params, "demuxlet_params.csv", row.names=FALSE, quote=FALSE)
   
   #result_melt = melt(stat_donor_identity)
   #result_melt$Trial = sapply(result_melt$Trial,function(x){
@@ -127,21 +127,21 @@ freemuxlet_summary <- function(freemuxlet_res) {
     colnames(freemuxlet_assign)[2] <- basename(x)
     freemuxlet_assign
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-  write.csv(assign, "freemuxlet_assignment.csv", row.names=FALSE)
+  write.csv(assign, "freemuxlet_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- assign[,-1]
   classi[classi != "AMB" & classi != "DBL"] <- "SNG"
   classi$Barcode <- assign$Barcode
   classi <- classi %>% select(order(colnames(classi)))
   
-  write.csv(classi, "freemuxlet_classification.csv", row.names=FALSE)
+  write.csv(classi, "freemuxlet_classification.csv", row.names=FALSE, quote=FALSE)
   
   classi_sum <- data.frame(table(t(classi[,-1])))
   colnames(classi_sum) <- c("Classification", "Frequency")
-  write.csv(classi_sum, "freemuxlet_classification_summary.csv", row.names=FALSE)
+  write.csv(classi_sum, "freemuxlet_classification_summary.csv", row.names=FALSE, quote=FALSE)
   assign_sum <- data.frame(table(t(assign[,-1])))
   colnames(assign_sum) <- c("Assignment", "Frequency")
-  write.csv(assign_sum, "freemuxlet_assignment_summary.csv", row.names=FALSE)
+  write.csv(assign_sum, "freemuxlet_assignment_summary.csv", row.names=FALSE, quote=FALSE)
   
   params <- lapply(freemuxlet_res, function(x){
     params_dir <- list.files(x, pattern = "params.csv", full.names = TRUE)[1]
@@ -149,7 +149,7 @@ freemuxlet_summary <- function(freemuxlet_res) {
     colnames(params_res)[2] <- basename(x)
     params_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Argument"), .)
-  write.csv(params, "freemuxlet_params.csv", row.names=FALSE)
+  write.csv(params, "freemuxlet_params.csv", row.names=FALSE, quote=FALSE)
   #result_melt = melt(stat_donor_identity)
   #result_melt$Trial = sapply(result_melt$Trial,function(x){
    # x = sub('Freemuxlet Trial','F',x)
@@ -172,20 +172,20 @@ vireo_summary <- function(vireo_res) {
     colnames(obs_res) <- c("Barcode", basename(x))
     obs_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-  write.csv(assign, "vireo_assignment.csv", row.names=FALSE)
+  write.csv(assign, "vireo_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- assign[,-1]
   classi[classi != "AMB" & classi != "DBL"] <- "SNG"
   classi$Barcode <- assign$Barcode
   classi <- classi %>% select(order(colnames(classi)))
-  write.csv(classi, "vireo_classification.csv", row.names=FALSE)
+  write.csv(classi, "vireo_classification.csv", row.names=FALSE, quote=FALSE)
   
   classi_sum <- data.frame(table(t(classi[,-1])))
   colnames(classi_sum) <- c("Classification", "Frequency")
-  write.csv(classi_sum, "vireo_classification_summary.csv", row.names=FALSE)
+  write.csv(classi_sum, "vireo_classification_summary.csv", row.names=FALSE, quote=FALSE)
   assign_sum <- data.frame(table(t(assign[,-1])))
   colnames(assign_sum) <- c("Assignment", "Frequency")
-  write.csv(assign_sum, "vireo_assignment_summary.csv", row.names=FALSE)
+  write.csv(assign_sum, "vireo_assignment_summary.csv", row.names=FALSE, quote=FALSE)
   
   params <- lapply(vireo_res, function(x){
     params_dir <- list.files(x, pattern = "params.csv", full.names = TRUE)[1]
@@ -193,7 +193,7 @@ vireo_summary <- function(vireo_res) {
     colnames(params_res)[2] <- basename(x)
     params_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Argument"), .)
-  write.csv(params, "vireo_params.csv", row.names=FALSE)
+  write.csv(params, "vireo_params.csv", row.names=FALSE, quote=FALSE)
   
   #result_melt = melt(stat_donors)
   #result_melt$Trial = sapply(result_melt$Trial,function(x){
@@ -217,21 +217,21 @@ souporcell_summary <- function(souporcell_res) {
     colnames(obs_res) <- c("Barcode", basename(x))
     obs_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-  write.csv(assign, "souporcell_assignment.csv", row.names=FALSE)
+  write.csv(assign, "souporcell_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- assign[,-1]
   classi[classi != "AMB" & classi != "DBL"] <- "SNG"
   classi$Barcode <- assign$Barcode
   classi <- classi %>% select(order(colnames(classi)))
-  write.csv(assign, "souporcell_classification.csv", row.names=FALSE)
+  write.csv(assign, "souporcell_classification.csv", row.names=FALSE, quote=FALSE)
 
   
   classi_sum <- data.frame(table(t(classi[,-1])))
   colnames(classi_sum) <- c("Classification", "Frequency")
-  write.csv(classi_sum, "souporcell_classification_summary.csv", row.names=FALSE)
+  write.csv(classi_sum, "souporcell_classification_summary.csv", row.names=FALSE, quote=FALSE)
   assign_sum <- data.frame(table(t(assign[,-1])))
   colnames(assign_sum) <- c("Assignment", "Frequency")
-  write.csv(assign_sum, "souporcell_assignment_summary.csv", row.names=FALSE)
+  write.csv(assign_sum, "souporcell_assignment_summary.csv", row.names=FALSE, quote=FALSE)
   
   params <- lapply(souporcell_res, function(x){
     params_dir <- list.files(x, pattern = "params.csv", full.names = TRUE)[1]
@@ -239,7 +239,7 @@ souporcell_summary <- function(souporcell_res) {
     colnames(params_res)[2] <- basename(x)
     params_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Argument"), .)
-  write.csv(params, "souporcell_params.csv", row.names=FALSE)
+  write.csv(params, "souporcell_params.csv", row.names=FALSE, quote=FALSE)
   
   #result_melt = melt(stat_donors)
   #result_melt$Trial = sapply(result_melt$Trial,function(x){
@@ -265,20 +265,20 @@ scsplit_summary <- function(scsplit_res) {
     colnames(obs_res)[2] <- basename(x)
     obs_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-  write.csv(assign, "scsplit_assignment.csv", row.names=FALSE)
+  write.csv(assign, "scsplit_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- assign[,-1]
   classi[classi != "AMB" & classi != "DBL"] <- "SNG"
   classi$Barcode <- assign$Barcode
   classi <- classi %>% select(order(colnames(classi)))
-  write.csv(classi, "scsplit_classification.csv", row.names=FALSE)
+  write.csv(classi, "scsplit_classification.csv", row.names=FALSE, quote=FALSE)
   
   classi_sum <- data.frame(table(t(classi[,-1])))
   colnames(classi_sum) <- c("Classification", "Frequency")
-  write.csv(classi_sum, "scsplit_classification_summary.csv", row.names=FALSE)
+  write.csv(classi_sum, "scsplit_classification_summary.csv", row.names=FALSE, quote=FALSE)
   assign_sum <- data.frame(table(t(assign[,-1])))
   colnames(assign_sum) <- c("Assignment", "Frequency")
-  write.csv(assign_sum, "scsplit_assignment_summary.csv", row.names=FALSE)
+  write.csv(assign_sum, "scsplit_assignment_summary.csv", row.names=FALSE, quote=FALSE)
   
   params <- lapply(scsplit_res, function(x){
     params_dir <- list.files(x, pattern = "params.csv", full.names = TRUE)[1]
@@ -286,7 +286,7 @@ scsplit_summary <- function(scsplit_res) {
     colnames(params_res)[2] <- basename(x)
     params_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Argument"), .)
-  write.csv(params, "scsplit_params.csv", row.names=FALSE)
+  write.csv(params, "scsplit_params.csv", row.names=FALSE, quote=FALSE)
   
  # result_melt = melt(stat_donors)
  # result_melt$Trial = sapply(result_melt$Trial,function(x){
@@ -334,11 +334,11 @@ assignment_all <- lapply(assignment, function(x){
   assign <- fread(x, header = TRUE)
   assign
 }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-write.csv(assignment_all, "genetic_assignment_all.csv", row.names=FALSE)
+write.csv(assignment_all, "genetic_assignment_all.csv", row.names=FALSE, quote=FALSE)
 
 classification <- list.files(".", pattern = "_classification.csv", full.names = TRUE)
 classification_all <- lapply(classification, function(x){
   classi <- fread(x, header = TRUE)
   classi
 }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
-write.csv(classification_all, "genetic_classification_all.csv", row.names=FALSE)
+write.csv(classification_all, "genetic_classification_all.csv", row.names=FALSE, quote=FALSE)

@@ -6,14 +6,15 @@ BAM Index should in the format BAMFILE.bam.bai
 '''
 include { gene_demultiplexing } from './modules/gene_demultiplexing'
 include { hash_demultiplexing } from './modules/hash_demultiplexing'
+include { donor_match } from './modules/donor_match'
 
 process summary_all{
-    publishDir "$params.outdir/$params.mode/summary", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode", mode: 'copy'
     input:
         path gene_demulti_result
         path hash_demulti_result
     output:
-        path '*.csv'
+        path summary
 
     script:
         """
@@ -22,7 +23,7 @@ process summary_all{
 }
 
 process filter_barcodes{
-    publishDir "$params.outdir/$params.mode/compare", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/compare", mode: 'copy'
     input:
         each selected_barcodes
         each white_list
@@ -49,23 +50,30 @@ def split_input(input){
 }
 
 workflow{
-    mode = params.mode
     whitelist_barcodes = split_input(params.barcodes)
-    if (mode == "genetic"){
+    if (params.mode == "genetic"){
         gene_demultiplexing(whitelist_barcodes)
+        if (params.match_donor == "True"){
+            donor_match(gene_demultiplexing.out)
+        }
     }
-    else if (mode == "hash"){
+    else if (params.mode == "hash"){
         hash_demultiplexing()
+        if (params.match_donor == "True"){
+            donor_match(hash_demultiplexing.out)
+        }
     }
-    else if (mode == "parallel"){
+    else if (params.mode == "parallel"){
         hash_demultiplexing()
         gene_demultiplexing(whitelist_barcodes)
         gene_summary = gene_demultiplexing.out
         hash_summary = hash_demultiplexing.out
         summary_all(gene_summary, hash_summary)
-        
+        if (params.match_donor == "True"){
+            donor_match(summary_all.out)
+        }
     }
-    else{
+    else if (params.mode == "recover"){
         hash_demultiplexing()
         selected_barcodes = hash_demultiplexing.out.map{ return it + "/selected_barcodes.tsv"}
         filter_barcodes(selected_barcodes, whitelist_barcodes)
@@ -74,5 +82,8 @@ workflow{
         gene_summary = gene_demultiplexing.out
         hash_summary = hash_demultiplexing.out
         summary_all(gene_summary, hash_summary)
+    }
+    else if (params.mode == "donor_match"){
+        donor_match(params.demultiplexing_result)
     }
 }

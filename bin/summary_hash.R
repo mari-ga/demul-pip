@@ -1,4 +1,4 @@
-#!/home/icb/xichen.wu/miniconda3/envs/summary/bin/Rscript
+#!/usr/bin/env Rscript
 library(data.table)
 library(stringr)
 library(argparse)

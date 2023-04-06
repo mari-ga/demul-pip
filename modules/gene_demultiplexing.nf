@@ -24,7 +24,7 @@ def split_input(input){
 }
 
 process summary{
-    publishDir "$params.outdir/$params.mode/gene_demulti", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/gene_demulti", mode: 'copy'
     input:
         val demuxlet_result
         val freemuxlet_result

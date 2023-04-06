@@ -2,7 +2,7 @@
 nextflow.enable.dsl=2
 
 process vireo{
-    publishDir "$params.outdir/$params.mode/gene_demulti/vireo", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/gene_demulti/vireo", mode: 'copy'
 
     input:
         each celldata
@@ -24,6 +24,8 @@ process vireo{
         each cellRange
         each callAmbientRNAs
         each nproc
+        
+        each findVariant
         
         each vireo_out
 
@@ -61,6 +63,12 @@ process vireo{
         touch vireo_${task.index}/params.csv
         echo -e "Argument,Value \n cell_data,${celldata_name} \n n_donor,${n_donor_yesno} \n vartrix_data, ${vartrix_data_name} \n donor_data, ${donor_data_name} \n genoTag, ${genoTag} \n noDoublet, ${noDoublet} \n nInit, ${nInit} \n extraDonor, ${extraDonor} \n extraDonorMode, ${extraDonorMode} \n learnGT, ${learnGT_yesno} \n ASEmode, ${ASEmode} \n noPlot, ${noPlot} \n randSeed, ${randSeed} \n cellRange, ${cellRange} \n callAmbientRNAs, ${callAmbientRNAs} \n nproc, ${nproc}" >> vireo_${task.index}/params.csv
         vireo ${cell_data} ${n_donor} ${vartrix_data} $donor ${geno_tag} ${no_doublet} ${n_init} ${extra_donor} ${extradonor_mode} $learnGT ${ase_mode} ${no_plot} ${random_seed} ${cell_range} ${call_ambient_rna} ${n_proc} -o vireo_${task.index}/${vireo_out}
+        if ([ "$donorfile" = "False" ]); then
+            if ([ "$findVariant" = "True" ] || [ "$findVariant" = "vireo" ]); then
+                GTbarcode -i vireo_${task.index}/${vireo_out}/GT_donors.vireo.vcf.gz -o vireo_${task.index}/${vireo_out}/filtered_variants.tsv ${randSeed}
+            fi
+        fi
+        
         """
 
 }
@@ -98,9 +106,10 @@ workflow demultiplex_vireo{
         cellRange = split_input(params.cellRange)
         callAmbientRNAs = split_input(params.callAmbientRNAs)
         nproc = split_input(params.nproc)
+        findVariant = split_input(params.findVariants)
         vireo_out = split_input(params.vireo_out)
     
-        vireo(celldata, ndonor, vartrixData, donorfile, genoTag, noDoublet, nInit, extraDonor, extraDonorMode, forceLearnGT, ASEmode, noPlot, randSeed, cellRange, callAmbientRNAs, nproc, vireo_out)
+        vireo(celldata, ndonor, vartrixData, donorfile, genoTag, noDoublet, nInit, extraDonor, extraDonorMode, forceLearnGT, ASEmode, noPlot, randSeed, cellRange, callAmbientRNAs, nproc, findVariant, vireo_out)
     
 
     emit:

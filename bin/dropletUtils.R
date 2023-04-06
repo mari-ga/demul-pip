@@ -1,4 +1,4 @@
-#!/home/icb/xichen.wu/miniconda3/envs/dropUtils/bin/Rscript
+#!/usr/bin/env Rscript
 library(Seurat)
 library(DropletUtils)
 library(argparse)

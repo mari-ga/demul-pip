@@ -8,7 +8,7 @@ def vcf_known_data_name = vcf_known != 'False' ? file(vcf_known).baseName : 'kno
 nextflow.enable.dsl=2
 
 process scSplit{
-    publishDir "$params.outdir/$params.mode/gene_demulti/scSplit", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/gene_demulti/scSplit", mode: 'copy'
     
     input:
         each vcf

@@ -30,7 +30,7 @@ if (concat == "True" & filter == "True"){
 '''
 
 process bcftools{
-    publishDir "$params.outdir/$params.mode/gene_demulti/bcftools", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/gene_demulti/bcftools", mode: 'copy'
 
     input:
         val vcf

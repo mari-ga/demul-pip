@@ -1,4 +1,4 @@
-#!/home/icb/xichen.wu/miniconda3/envs/summary/bin/Rscript
+#!/usr/bin/env Rscript
 suppressPackageStartupMessages(library("argparse"))
 suppressPackageStartupMessages(library("data.table"))
 suppressPackageStartupMessages(library("R.utils"))
@@ -65,8 +65,8 @@ demuxlet_summary <- function(demuxlet_res) {
       else{
         "NA"}
     })
-    obs_res[Assignment =="NA",]$Assignment = "DBL"
-    obs_res[DROPLET.TYPE=="AMB",]$Assignment = "AMB"
+    obs_res[Assignment =="NA",]$Assignment = "doublet"
+    obs_res[DROPLET.TYPE=="AMB",]$Assignment = "negative"
     colnames(obs_res)[1] <- "Barcode"
     demuxlet_assign <- obs_res[, c("Barcode", "Assignment")]
     colnames(demuxlet_assign)[2] <- basename(x)
@@ -75,7 +75,7 @@ demuxlet_summary <- function(demuxlet_res) {
   write.csv(assign, "demuxlet_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- assign[,-1]
-  classi[classi != "AMB" & classi != "DBL"] <- "SNG"
+  classi[classi != "negative" & classi != "doublet"] <- "singlet"
   classi$Barcode <- assign$Barcode
   classi <- classi %>% select(order(colnames(classi)))
   
@@ -120,8 +120,8 @@ freemuxlet_summary <- function(freemuxlet_res) {
       else{
         "NA"}
     })
-    obs_res[Assignment =="NA",]$Assignment = "DBL"
-    obs_res[DROPLET.TYPE=="AMB",]$Assignment = "AMB"
+    obs_res[Assignment =="NA",]$Assignment = "doublet"
+    obs_res[DROPLET.TYPE=="AMB",]$Assignment = "negative"
     colnames(obs_res)[1] <- "Barcode"
     freemuxlet_assign <- obs_res[, c("Barcode", "Assignment")]
     colnames(freemuxlet_assign)[2] <- basename(x)
@@ -130,7 +130,7 @@ freemuxlet_summary <- function(freemuxlet_res) {
   write.csv(assign, "freemuxlet_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- assign[,-1]
-  classi[classi != "AMB" & classi != "DBL"] <- "SNG"
+  classi[classi != "negative" & classi != "doublet"] <- "singlet"
   classi$Barcode <- assign$Barcode
   classi <- classi %>% select(order(colnames(classi)))
   
@@ -167,15 +167,14 @@ vireo_summary <- function(vireo_res) {
     obs_res_dir <- list.files(x, pattern = "donor_ids.tsv", full.names = TRUE, recursive = TRUE)[1]
     obs_res <- fread(obs_res_dir)
     obs_res <- obs_res[,c(1,2)]
-    obs_res[obs_res =="unassigned"] = "AMB"
-    obs_res[obs_res =="unassigned"] = "DBL"
+    obs_res[obs_res =="unassigned"] = "negative"
     colnames(obs_res) <- c("Barcode", basename(x))
     obs_res
   }) %>% Reduce(function(dtf1,dtf2) full_join(dtf1,dtf2,by="Barcode"), .)
   write.csv(assign, "vireo_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- assign[,-1]
-  classi[classi != "AMB" & classi != "DBL"] <- "SNG"
+  classi[classi != "negative" & classi != "doublet"] <- "singlet"
   classi$Barcode <- assign$Barcode
   classi <- classi %>% select(order(colnames(classi)))
   write.csv(classi, "vireo_classification.csv", row.names=FALSE, quote=FALSE)
@@ -211,8 +210,8 @@ souporcell_summary <- function(souporcell_res) {
     obs_res_dir <- list.files(x, pattern = "clusters.tsv", full.names = TRUE, recursive = TRUE)[1]
     obs_res <- fread(obs_res_dir)
     obs_res <- obs_res[,1:3]
-    obs_res[obs_res$status == "doublet",]$assignment = "DBL"
-    obs_res[obs_res$status == "unassigned",]$assignment = "AMB"
+    obs_res[obs_res$status == "doublet",]$assignment = "doublet"
+    obs_res[obs_res$status == "unassigned",]$assignment = "negative"
     obs_res <- obs_res[, -2]
     colnames(obs_res) <- c("Barcode", basename(x))
     obs_res
@@ -220,7 +219,7 @@ souporcell_summary <- function(souporcell_res) {
   write.csv(assign, "souporcell_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- assign[,-1]
-  classi[classi != "AMB" & classi != "DBL"] <- "SNG"
+  classi[classi != "negative" & classi != "doublet"] <- "singlet"
   classi$Barcode <- assign$Barcode
   classi <- classi %>% select(order(colnames(classi)))
   write.csv(assign, "souporcell_classification.csv", row.names=FALSE, quote=FALSE)
@@ -260,7 +259,7 @@ scsplit_summary <- function(scsplit_res) {
     obs_res <- transform(obs_res, new=do.call(rbind, strsplit(Cluster, '-', fixed=TRUE)), stringsAsFactors=F)
     obs_res <- obs_res[,-2]
     colnames(obs_res) = c("Barcode", "Classification", "Assignment")
-    obs_res[obs_res$Classification == "DBL"]$Assignment = "DBL"
+    obs_res[obs_res$Classification == "DBL"]$Assignment = "doublet"
     obs_res <- obs_res[, -2]
     colnames(obs_res)[2] <- basename(x)
     obs_res
@@ -268,7 +267,7 @@ scsplit_summary <- function(scsplit_res) {
   write.csv(assign, "scsplit_assignment.csv", row.names=FALSE, quote=FALSE)
   
   classi <- assign[,-1]
-  classi[classi != "AMB" & classi != "DBL"] <- "SNG"
+  classi[classi != "negative" & classi != "doublet"] <- "singlet"
   classi$Barcode <- assign$Barcode
   classi <- classi %>% select(order(colnames(classi)))
   write.csv(classi, "scsplit_classification.csv", row.names=FALSE, quote=FALSE)

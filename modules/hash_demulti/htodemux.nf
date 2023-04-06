@@ -2,7 +2,7 @@
 nextflow.enable.dsl=2
 
 process htodemux{
-    publishDir "$params.outdir/$params.mode/hash_demulti/htodemux", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/hash_demulti/htodemux", mode: 'copy'
     label 'seurat'
     input:
         each seurat_object

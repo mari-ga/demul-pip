@@ -2,7 +2,7 @@
 nextflow.enable.dsl=2
 
 process cellSNP{
-    publishDir "$params.outdir/$params.mode/gene_demulti/cellSNP", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/gene_demulti/cellSNP", mode: 'copy'
     
     input:
         val samFile_cellSNP

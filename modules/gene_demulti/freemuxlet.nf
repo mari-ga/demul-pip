@@ -2,7 +2,7 @@
 nextflow.enable.dsl=2
 
 process freemuxlet {
-    publishDir "$params.outdir/$params.mode/gene_demulti/freemuxlet", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/gene_demulti/freemuxlet", mode: 'copy'
     input:
         each sam
         each vcf

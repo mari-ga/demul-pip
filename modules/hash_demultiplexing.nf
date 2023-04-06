@@ -9,7 +9,7 @@ include { demuxem_hashing } from './hash_demulti/demuxem'
 include { solo_hashing } from './hash_demulti/solo'
 
 process summary{
-    publishDir "$params.outdir/$params.mode/hash_demulti", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/hash_demulti", mode: 'copy'
     input:
         val demuxem_result
         val hashsolo_result

@@ -57,7 +57,7 @@ if __name__ == '__main__':
          "Background probability", output_name + ".background_probabilities.bar.pdf",)
     demuxEM.plot_hto_hist(hashing_data, "rna_type", output_name + ".real_content.hist.pdf", alpha=0.5)
     demuxEM.plot_rna_hist(rna_data, hashing_data, output_name + ".rna_demux.hist.pdf")
-    rna_data.obs.to_csv(output_name + "_obs.csv")
+    
     if len(args.generateGenderPlot) > 0:
         rna_data.matrices["raw.X"] = rna_data.X.copy()
         rna_data.as_float()
@@ -87,3 +87,7 @@ if __name__ == '__main__':
     summary.to_csv(output_name + "_summary.csv", index=False)
     param_df.to_csv(args.outputdir + "/params.csv", index=False)
     
+    hashtags = hashing_data.var.index.tolist()
+    toreplace = [ht for ht in rna_data.obs['assignment'].unique() if ht not in hashtags]
+    rna_data.obs.replace(toreplace,'doublet', inplace=True)
+    rna_data.obs.to_csv(output_name + "_obs.csv")

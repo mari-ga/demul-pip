@@ -3,7 +3,7 @@
 nextflow.enable.dsl=2
 
 process demuxlet {
-    publishDir "$params.outdir/$params.mode/gene_demulti/demuxlet", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/gene_demulti/demuxlet", mode: 'copy'
     input:
         each sam
         each tag_group

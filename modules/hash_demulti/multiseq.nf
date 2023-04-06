@@ -2,7 +2,7 @@
 nextflow.enable.dsl=2
 
 process multi_seq{
-    publishDir "$params.outdir/$params.mode/hash_demulti/multiseq", mode:'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/hash_demulti/multiseq", mode:'copy'
     label 'seurat'
     input:
     each rdsObject

@@ -1,4 +1,4 @@
-#!/home/icb/xichen.wu/miniconda3/envs/rseurat/bin/Rscript
+#!/usr/bin/env Rscript
 #Libraries
 library(Seurat)
 library(argparse)
@@ -60,13 +60,19 @@ hashtag
 
 # Saving results
 
+donors <- rownames(hashtag[[args$assay]])
+assignment <- hashtag[[paste0(args$assay,"_classification")]]
+assignment[[paste0(args$assay,"_classification")]][!assignment[[paste0(args$assay,"_classification")]] %in% c(donors, 'Negative')] <- "Doublet"
+
+
 print("------------------- Following Files are saved ----------------------------")
 print(paste0(args$assignmentOutHTOdemux, "_assignment_htodemux.csv"))
 print(paste0(args$assignmentOutHTOdemux, "_classification_htodemux.csv"))
 print(paste0(args$objectOutHTOdemux,".rds"))
 print("params.csv")
 write.csv(params, paste0(args$outputdir, "/params.csv"))
-write.csv(hashtag[[paste0(args$assay,"_classification")]], paste0(args$outputdir, "/", args$assignmentOutHTOdemux, "_assignment_htodemux.csv"))
+write.csv(assignment, paste0(args$outputdir, "/", args$assignmentOutHTOdemux, "_assignment_htodemux.csv"))
+#write.csv(hashtag[[paste0(args$assay,"_classification")]], paste0(args$outputdir, "/", args$assignmentOutHTOdemux, "_assignment_htodemux.csv"))
 write.csv(hashtag[[paste0(args$assay,"_classification.global")]], paste0(args$outputdir, "/", args$assignmentOutHTOdemux, "_classification_htodemux.csv"))
 saveRDS(hashtag, file=paste0(args$outputdir, "/", args$objectOutHTOdemux,".rds"))
 

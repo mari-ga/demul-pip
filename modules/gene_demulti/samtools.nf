@@ -12,7 +12,7 @@
 nextflow.enable.dsl=2
 
 process samstool{
-    publishDir "$params.outdir/$params.mode/gene_demulti/samtools", mode: 'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/gene_demulti/samtools", mode: 'copy'
 
     input:
         file bam

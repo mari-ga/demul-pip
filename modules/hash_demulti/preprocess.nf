@@ -1,5 +1,5 @@
 process preprocess{
-    publishDir "$params.outdir/$params.mode/hash_demulti/preprocess", mode:'copy'
+    publishDir "$projectDir/$params.outdir/$params.mode/hash_demulti/preprocess", mode:'copy'
     label 'seurat'
     input:
         each rdsObject

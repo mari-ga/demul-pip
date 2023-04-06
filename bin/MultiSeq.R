@@ -1,4 +1,4 @@
-#!/home/icb/xichen.wu/miniconda3/envs/rseurat/bin/Rscript
+#!/usr/bin/env Rscript
 #Libraries
 library(Seurat)
 library(argparse)

@@ -12,6 +12,7 @@ parser$add_argument("--multiseq", help = "Folder containing output files of mult
 parser$add_argument("--hashsolo", help = "Folder containing output files of hashsolo", default = NULL)
 parser$add_argument("--solo", help = "Folder containing output files of solo", default = NULL)
 parser$add_argument("--hashedDrops", help = "Folder containing output files of hashedDrops", default = NULL)
+parser$add_argument("--gmmDemux", help = "Folder containing output files of GMM Demux", default = NULL)
 parser$add_argument("--select", help = "Select the singlets detected by the specified number of tools or fewer.", default = 1)
 args <- parser$parse_args()
 
@@ -224,6 +225,12 @@ if (!is.null(args$solo)){
   solo_res <- str_split(solo_res, pattern=':')[[1]]
   solo_summary(solo_res)
   print("solo result found")
+
+}if (!is.null(args$gmmDemux)){
+  gmm_demux_res <- substring(args$gmmDemux, 1, nchar(args$gmmDemux)-1)
+  gmm_demux_res <- str_split(gmm_demux_res, pattern=':')[[1]]
+  #gmm_demux_summary(gmm_demux_res)
+  print("GMM Demux result found")
 }
 
 assignment <- list.files(".", pattern = "_assignment.csv", full.names = TRUE)

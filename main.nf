@@ -57,7 +57,7 @@ workflow{
             donor_match(gene_demultiplexing.out)
         }
     }
-    else if (params.mode == "hash"){
+    else if (params.mode == "hashing"){
         hash_demultiplexing()
         if (params.match_donor == "True"){
             donor_match(hash_demultiplexing.out)

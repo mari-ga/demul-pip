@@ -6,6 +6,8 @@ dependencies:
  - pegasuspy
  - pip
  - pip:
+   - cython
    - demuxEM
    - argparse
+
    

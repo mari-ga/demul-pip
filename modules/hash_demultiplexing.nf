@@ -7,6 +7,7 @@ include { hash_solo_hashing } from './hash_demulti/hashsolo'
 include { hashedDrops_hashing } from './hash_demulti/hashedDrops'
 include { demuxem_hashing } from './hash_demulti/demuxem'
 include { solo_hashing } from './hash_demulti/solo'
+include { gmm_demux_hashing } from './hash_demulti/gmm_demux'
 
 process summary{
     publishDir "$projectDir/$params.outdir/$params.mode/hash_demulti", mode: 'copy'
@@ -17,6 +18,7 @@ process summary{
         val multiseq_result
         val hashedDrops_result
         val solo_result
+        val gmmDemux_result
         val select
     
     output:
@@ -29,6 +31,7 @@ process summary{
         def multiseq_files = ""
         def hashedDrops_files = ""
         def solo_files = ""
+        def gmmDemux_files = ""
         
         if (demuxem_result != "no_result"){
             demuxem_files = "--demuxem "
@@ -66,7 +69,14 @@ process summary{
                 solo_files = solo_files + r + ":"
             }
         }
+        if (gmmDemux_result != "no_result"){
+            gmmDemux_files = "--gmm_demux "
+            for(r : gmmDemux_result) {
+                gmmDemux_files = gmmDemux_files + r + ":"
+            }
+        }
         
+        //add GMM Demux
         """
         mkdir hash_summary && cd hash_summary
         summary_hash.R --select $select $demuxem_files $htodemux_files $multiseq_files $hashedDrops_files $hashsolo_files $solo_files
@@ -131,8 +141,17 @@ workflow hash_demultiplexing{
     else{
         solo_out = channel.value("no_result")
     }
+    if(params.gmmDemux == "True"){
+        print "Executing gmm"
+        gmm_demux_hashing()
+        gmmDemux_out = channel.value("sth else")
+    }else{
+        print "not executing gmm"
+        gmmDemux_out = channel.value("no_result")
+    }
     
-    summary(demuxem_out, hashsolo_out, htodemux_out, multiseq_out, hashedDrops_out, solo_out, params.select)
+    
+    summary(demuxem_out, hashsolo_out, htodemux_out, multiseq_out, hashedDrops_out, solo_out,gmmDemux_out, params.select)
     emit:
     summary.out
 }

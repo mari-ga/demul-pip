@@ -3,9 +3,12 @@ channels:
  - conda-forge
  - bioconda
 dependencies:
- - r-base>=4.2
- - bioconductor-demuxmix
- - bioconductor-dropletutils
+ - conda-forge::r-base>=4.2
+ - r-seurat
+ - r-argparse
+
+
+
 
    
 

@@ -4,8 +4,8 @@ nextflow.enable.dsl=2
 process demuxmix{
     publishDir "$projectDir/$params.outdir/$params.mode/hash_demulti/demuxmix", mode:'copy'
     input:
-        each raw_rna_matrix_dir
-        each raw_hto_matrix_dir
+        //shares pre-process Seurat
+        each seurat_object
         //Same assay as Seurat - It's a seurat part
         each assay
         //same list as GMM

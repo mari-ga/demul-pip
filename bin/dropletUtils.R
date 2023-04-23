@@ -91,8 +91,8 @@ combinations <- args$combinations
 if(is.null(combinations)){
    combinations <- "NULL"
 }
-Argument <- c("raw_hto_matrix_dir", "lower", "niters", "testAmbient", "ignore", "alpha", "round", "byRank", "isCellFDR", "ambient", "minProp", "pseudoCount", "constantAmbient", "doubletNmads", "doubletMin", "doubletMixture", "confidentNmads", "combinations")
-Value <- c(args$raw_hto_matrix_dir, args$lower, args$niters, args$testAmbient, ignore, alpha, args$round, byRank, args$isCellFDR, ambient, minProp, args$pseudoCount, args$constantAmbient, args$doubletNmads, args$doubletMin, args$doubletMixture, args$confidentNmads, combinations)
+Argument <- c("raw_hto_matrix_dir", "lower", "niters", "testAmbient", "ignore", "alpha", "round", "byRank", "isCellFDR", "ambient", "minProp", "pseudoCount", "constantAmbient", "doubletNmads", "doubletMin", "doubletMixture", "confidentNmads", "confidenMin", "combinations")
+Value <- c(args$raw_hto_matrix_dir, args$lower, args$niters, args$testAmbient, ignore, alpha, args$round, byRank, args$isCellFDR, ambient, minProp, args$pseudoCount, args$constantAmbient, args$doubletNmads, args$doubletMin, args$doubletMixture, args$confidentNmads, args$confidenMin, combinations)
 
 params <- data.frame(Argument, Value)
 

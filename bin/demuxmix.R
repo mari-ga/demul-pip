@@ -1,16 +1,15 @@
 #!/usr/bin/env Rscript
 
-is_bioconductor<-require("BiocManager")
-if(is_bioconductor){
+if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-}
 is_demuxmix<-require("demuxmix")
-if(is_bioconductor){
+if (!require("demuxmix", quietly = TRUE))
     BiocManager::install("demuxmix")
-}
+
 library(Seurat)
 library(demuxmix)
 library(argparse)
+library(data.table)
 
 # Create a parser
 parser <- ArgumentParser("Parameters for Demuxmix")
@@ -48,10 +47,13 @@ hto_counts <- as.matrix(GetAssayData(hashtag[["HTO"]], slot = "counts"))
 demuxmix_demul <- demuxmix(hto_counts, model = model)
 #hashtag Classification
 demuxmix_classify <- dmmClassify(dmm)
-#do we want to transform multiples into doublets?
-#do we want to join result for negatives and uncertains
-#Transformar una vez que los resultados este en tabla
 
-write.csv(demuxmix_classify, paste0(args$outputdir, "/","_assignment_htodemux.csv"),row.names=FALSE)
+res_dt <- as.data.table(demuxmix_classify)
+res_dt[,Classification := Type]
+res_dt[Classification == "multiplet", Classification := "doublet"]
+res_dt[Classification == "uncertain", Classification := "negative"]
+
+
+write.csv(res_dt, paste0(args$outputdir, "/","_assignment_htodemux.csv"),row.names=FALSE)
 #write.csv(hashtag[[paste0(args$assay,"_classification")]], paste0(args$outputdir, "/", args$assignmentOutHTOdemux, "_assignment_htodemux.csv"))
 saveRDS(demuxmix_demul, file=paste0(args$outputdir, "/", args$objectOutHTOdemux,".rds"))

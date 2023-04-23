@@ -6,6 +6,7 @@ dependencies:
  - conda-forge::r-base>=4.2
  - r-seurat
  - r-argparse
+ - r-data.table
 
 
 

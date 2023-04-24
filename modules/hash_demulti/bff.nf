@@ -4,7 +4,7 @@ nextflow.enable.dsl=2
 process bff{
     publishDir "$projectDir/$params.outdir/$params.mode/hash_demulti/bff", mode:'copy'
     input:
-        each raw_hto_matrix_dir
+        each seurat_object
         //Seurat process
         each assay
         each methods

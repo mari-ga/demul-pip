@@ -93,14 +93,12 @@ process summary{
         """
 }
 
-
-
 workflow hash_demultiplexing {
 
     main:
     if ((params.htodemux == "True" & params.htodemux_preprocess != "False")| \
        (params.multiseq == "True" & params.multiseq_preprocess != "False")| \
-       (params.demuxmix_mode == "True" & params.demuxmix_preprocess != "False")){
+       (params.demuxmix_mode == "True" & params.demuxmix_preprocess != "False") ){
         preprocessing_hashing()
     }
     
@@ -163,14 +161,15 @@ workflow hash_demultiplexing {
         rdsobj = params.demuxmix_preprocess == 'True'? preprocessing_hashing.out: (params.demuxmix_preprocess == 'False'? Channel.from(params.rdsObj_demuxmix) : preprocessing_hashing.out.mix(Channel.from(params.rdsObj_demuxmix)))
         print "Executing demuxmix"
         demuxmix_hashing(rdsobj)
-        demuxmix_out = channel.demuxmix_hashing.out
+        demuxmix_out = channel.value("sth else")
+        //demuxmix_hashing.out
     }else{
         print "not executing demuxmix"
         demuxmix_out = channel.value("no_result")
     }
     
     
-    summary(demuxem_out, hashsolo_out, htodemux_out, multiseq_out, hashedDrops_out, solo_out,gmmDemux_out, demuxmix_out params.select)
+    summary(demuxem_out, hashsolo_out, htodemux_out, multiseq_out, hashedDrops_out, solo_out,gmmDemux_out, demuxmix_out, params.select)
     
     emit:
     summary.out

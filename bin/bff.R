@@ -81,4 +81,6 @@ hashtag <-readRDS(seuratObj)
 seurat_hto_counts <- hashtag[["HTO"]]@counts
 
 cell_hash_R_res <- GenerateCellHashingCalls(barcodeMatrix = seurat_hto_counts, methods = c("bff_raw", "bff_cluster"), doTSNE = FALSE, doHeatmap = FALSE)
-
+print("params.csv")
+write.csv(params, paste0(args$outputdir, "/params.csv"))
+write.csv(cell_hash_R_res, paste0(args$outputdir, "/", "assignment_bff.csv"))

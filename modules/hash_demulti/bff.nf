@@ -26,7 +26,10 @@ process bff{
         def generateGenderPlot = generate_gender_plot != 'None' ? " --generateGenderPlot ${generate_gender_plot}" : ''
         """
         mkdir bff_${task.index}
-        
+        bff.R --seuratObject $seurat_object --assay $assay --methods $methods --methodsForConsensus $methodsForConsensus \
+        --cellbarcodeWhitelist $cellbarcodeWhitelist --cellbarcodeWhitelist $cellbarcodeWhitelist --metricsFile $metricsFile \
+        --doTSNE $doTSNE --doHeatmap $doHeatmap --perCellSaturation $perCellSaturation --majorityConsensusThreshold $majorityConsensusThreshold \
+        --chemistry $chemistry --callerDisagreementThreshold $callerDisagreementThreshold --outputdir bff_${task.index}
         """
 
 }
@@ -41,8 +44,9 @@ def split_input(input){
 }
 
 workflow bff_hashing{
+  take: 
+        seurat_object
   main:
-        raw_hto_matrix_dir = split_input(params.hto_matrix_demuxem)
         assay = split_input(params.assay)
         methods = split_input(params.methods)
         methodsForConsensus = split_input(params.methodsForConsensus)
@@ -56,7 +60,7 @@ workflow bff_hashing{
         callerDisagreementThreshold = split_input(params.callerDisagreementThreshold)
 
 
-        bff(raw_hto_matrix_dir,assay, methods, methodsForConsensus, cellbarcodeWhitelist,metricsFile,doTSNE,doHeatmap,perCellSaturation,majorityConsensusThreshold,chemistry,callerDisagreementThreshold)
+        bff(seurat_object,assay, methods, methodsForConsensus, metricsFile,cellbarcodeWhitelist,doTSNE,doHeatmap,perCellSaturation,majorityConsensusThreshold,chemistry,callerDisagreementThreshold)
   
   emit:
         bff.out.collect()
@@ -65,6 +69,5 @@ workflow bff_hashing{
 
 workflow{
     bff_hashing()
-
 
 }
